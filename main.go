@@ -10,10 +10,7 @@ import (
 
 func main() {
 	config.Load()
-	fmt.Println(config.Port)
-	fmt.Println(config.StringDatabaseConnection)
-	fmt.Println("Rodando a API!")
 	r := router.Generate()
-
+	fmt.Printf("Server running in %d", config.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }

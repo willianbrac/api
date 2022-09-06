@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  mysqlsrv:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: userroot
+      MYSQL_DATABASE: devbookdb
+      MYSQL_USER: userbook
+      MYSQL_PASSWORD: userroot
+    ports:
+      - 3306:3306
+    volumes:
+      - /home/Docker/Volumes/MySql:/var/lib/mysql
+    networks:
+      - mysql-compose-network
+
+networks:
+  mysql-compose-network:
+    driver: bridge
