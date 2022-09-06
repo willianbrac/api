@@ -54,8 +54,8 @@ func (repository Users) List() ([]models.User, error) {
 	return users, nil
 }
 
-func (repository Users) FindOne(userId uint64) (models.User, error) {
-	rows, err := repository.db.Query("SELECT id, name, email, createdAt FROM users WHERE id = ?", userId)
+func (repository Users) FindOne(ID uint64) (models.User, error) {
+	rows, err := repository.db.Query("SELECT id, name, email, createdAt FROM users WHERE id = ?", ID)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -72,4 +72,32 @@ func (repository Users) FindOne(userId uint64) (models.User, error) {
 		}
 	}
 	return user, nil
+}
+
+func (repository Users) Update(ID uint64, body models.User) error {
+	statement, err := repository.db.Prepare(
+		"UPDATE users SET name = ?, email = ? WHERE id = ?",
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	if _, err := statement.Exec(body.Name, body.Email, ID);err != nil {
+		return err
+	}
+	return nil
+}
+
+func (repository Users) Delete(ID uint64) error {
+	statement, err := repository.db.Prepare(
+		"DELETE FROM users WHERE id = ?",
+	)
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	if _, err := statement.Exec(ID); err != nil {
+		return err
+	}
+	return nil
 }
