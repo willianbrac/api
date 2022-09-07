@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api/src/auth"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -66,6 +68,19 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 		responses.Err(w, http.StatusBadRequest, err)
 		return
 	}
+
+	userIDOnToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Err(w, http.StatusUnauthorized, err)
+		return
+	}
+	if userID != userIDOnToken {
+		responses.Err(w, http.StatusForbidden, errors.New(
+			"Não é possivel atualizar outro usuário que não seja você",
+		))
+		return
+	}
+	
 	db, err := database.Conn()
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
@@ -93,6 +108,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 		responses.Err(w, http.StatusUnprocessableEntity, err)
 		return
 	}
+
+	userIDOnToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Err(w, http.StatusUnauthorized, err)
+		return
+	}
+	if userID != userIDOnToken {
+		responses.Err(w, http.StatusForbidden, errors.New(
+			"Não é possivel atualizar outro usuário que não seja você",
+		))
+		return
+	}
+
 	var user models.User
 	if err = json.Unmarshal(body, &user); err != nil {
 		responses.Err(w, http.StatusBadRequest, err)
@@ -125,6 +153,19 @@ func DeleteUser(w http.ResponseWriter, r *http.Request) {
 		responses.Err(w, http.StatusBadRequest, err)
 		return
 	}
+
+	userIDOnToken, err := auth.ExtractUserID(r)
+	if err != nil {
+		responses.Err(w, http.StatusUnauthorized, err)
+		return
+	}
+	if userID != userIDOnToken {
+		responses.Err(w, http.StatusForbidden, errors.New(
+			"Não é possivel atualizar outro usuário que não seja você",
+		))
+		return
+	}
+
 	db, err := database.Conn()
 	if err != nil {
 		responses.Err(w, http.StatusInternalServerError, err)
