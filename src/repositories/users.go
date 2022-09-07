@@ -33,7 +33,7 @@ func (repository Users) Create(user models.User) (uint64, error) {
 }
 
 func (repository Users) List() ([]models.User, error) {
-	rows, err := repository.db.Query("SELECT id, name, email, createdAt FROM users")
+	rows, err := repository.db.Query("SELECT id, name, email FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,6 @@ func (repository Users) List() ([]models.User, error) {
 			&user.ID,
 			&user.Name,
 			&user.Email,
-			&user.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -55,7 +54,7 @@ func (repository Users) List() ([]models.User, error) {
 }
 
 func (repository Users) FindOne(ID uint64) (models.User, error) {
-	rows, err := repository.db.Query("SELECT id, name, email, createdAt FROM users WHERE id = ?", ID)
+	rows, err := repository.db.Query("SELECT id, name, email FROM users WHERE id = ?", ID)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -66,7 +65,6 @@ func (repository Users) FindOne(ID uint64) (models.User, error) {
 			&user.ID,
 			&user.Name,
 			&user.Email,
-			&user.CreatedAt,
 		); err != nil {
 			return models.User{}, err
 		}
