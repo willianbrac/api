@@ -3,17 +3,34 @@ version: "3"
 services:
   mysqlsrv:
     image: mysql:5.7
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: userroot
-      MYSQL_DATABASE: devbookdb
-      MYSQL_USER: userbook
-      MYSQL_PASSWORD: userroot
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - 3306:3306
+      - ${MYSQL_PORT}:${MYSQL_PORT}
     volumes:
       - /home/Docker/Volumes/MySql:/var/lib/mysql
     networks:
       - mysql-compose-network
+
+  go:
+    container_name: go
+    build: .
+    ports:
+      - ${API_PORT}:${API_PORT}
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - mysqlsrv
+    networks:
+      - mysql-compose-network
+
+volumes:
+  api:
+  database_postgres:
 
 networks:
   mysql-compose-network:
