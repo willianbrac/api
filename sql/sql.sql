@@ -13,7 +13,7 @@ CREATE TABLE users(
 CREATE TABLE books(
     id int auto_increment,
     title varchar(50) not null unique,
-    category varchar(60) not null unique,
+    category varchar(60) not null,
     synopsis varchar(250) not null,
     author_id int not null,
     createdAt timestamp default current_timestamp(),
